@@ -1,62 +1,44 @@
-import { spring } from "remotion";
-import {
-  AbsoluteFill,
-  interpolate,
-  Sequence,
-  useCurrentFrame,
-  useVideoConfig,
-} from "remotion";
-import { Logo } from "./Logo";
-import { Subtitle } from "./Subtitle";
-import { Title } from "./Title";
+import { AbsoluteFill, useCurrentFrame, useVideoConfig } from 'remotion';
 
-export const HelloWorld = ({ titleText, titleColor }) => {
+const scriptLines = [
+  "As a 3PL, your job isn’t just to ship your clients’ orders —",
+  "it’s to protect their brand integrity.",
+  "When packages are delayed or go missing,",
+  "you’re stuck chasing down a carrier rep who doesn’t really care —",
+  "and isn’t getting back to you fast enough.",
+  "And let’s be real — your client doesn’t blame UPS or FedEx.",
+  "They blame you.",
+  "That’s where Sire changes everything.",
+  "With Sire, you get:",
+  "A designated account rep who escalates issues quickly and keeps you in the loop",
+  "Live updates and transparency, so your clients never feel like they’re in the dark",
+  "And access to discounted rates —",
+  "because we combine the shipping volume of 3PLs across the country into one master account",
+  "That means stronger leverage, faster resolutions, and more margin on every label —",
+  "without sacrificing your clients' trust.",
+  "If you want your 3PL to run smoother and feel more supported,",
+  "Sire is built for you.",
+];
+
+export const HelloWorld = () => {
   const frame = useCurrentFrame();
-  const { durationInFrames, fps } = useVideoConfig();
+  const { fps } = useVideoConfig();
+  const durationPerLine = 90; // ~3 seconds
+  const currentLine = Math.floor(frame / durationPerLine);
 
-  // Animate from 0 to 1 after 25 frames
-  const logoTranslationProgress = spring({
-    frame: frame - 25,
-    fps,
-    config: {
-      damping: 100,
-    },
-  });
-
-  // Move the logo up by 150 pixels once the transition starts
-  const logoTranslation = interpolate(
-    logoTranslationProgress,
-    [0, 1],
-    [0, -150],
-  );
-
-  // Fade out the animation at the end
-  const opacity = interpolate(
-    frame,
-    [durationInFrames - 25, durationInFrames - 15],
-    [1, 0],
-    {
-      extrapolateLeft: "clamp",
-      extrapolateRight: "clamp",
-    },
-  );
-
-  // A <AbsoluteFill> is just a absolutely positioned <div>!
   return (
-    <AbsoluteFill style={{ backgroundColor: "white" }}>
-      <AbsoluteFill style={{ opacity }}>
-        <AbsoluteFill style={{ transform: `translateY(${logoTranslation}px)` }}>
-          <Logo />
-        </AbsoluteFill>
-        {/* Sequences can shift the time for its children! */}
-        <Sequence from={35}>
-          <Title titleText={titleText} titleColor={titleColor} />
-        </Sequence>
-        {/* The subtitle will only enter on the 75th frame. */}
-        <Sequence from={75}>
-          <Subtitle />
-        </Sequence>
-      </AbsoluteFill>
+    <AbsoluteFill style={{ backgroundColor: 'white', justifyContent: 'center', alignItems: 'center' }}>
+      <div style={{
+        fontSize: 60,
+        fontWeight: 'bold',
+        textAlign: 'center',
+        color: 'black',
+        width: '80%',
+        lineHeight: 1.3,
+      }}>
+        {scriptLines[currentLine] ?? ""}
+      </div>
     </AbsoluteFill>
   );
 };
+
